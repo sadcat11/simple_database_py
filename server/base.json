@@ -1,0 +1,30 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": 123,
+      "email": "ddd@email",
+      "age": 33
+    },
+    {
+      "id": 2,
+      "name": "asd",
+      "email": "qweqq@email",
+      "age": 33
+    },
+    {
+      "id": 3,
+      "name": "qwe asd",
+      "email": "www@ww",
+      "age": 54
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "prodname",
+      "price": 222.0,
+      "stock": 33
+    }
+  ]
+}
