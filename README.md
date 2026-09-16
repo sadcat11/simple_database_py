@@ -1,6 +1,18 @@
 # simple_database_py
 Client-server simple database
 
+- [Quick start]((#Quick-start))
+
+  - [Required]((##Required))
+
+  - [Server]((##Server))
+
+  - [Client]((##Client))
+
+  - [Autotest]((##Autotest))
+
+- [Code architecture]((##Code-architecture))
+
 ## Quick start
 To use the client application, you must first start the server. To run automated tests, you must first start the server.
 
@@ -46,7 +58,7 @@ Stop
 ctrl + c
 ```
 
-### Code architecture
+## Code architecture
 The `server` folder contains the code files for server operation and the database itself in JSON format.
 
 The `client` folder contains the files for client operation.
