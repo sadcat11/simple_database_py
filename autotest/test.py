@@ -1,6 +1,7 @@
 import requests
 import sys
 from pathlib import Path
+import argparse
 
 CLIENT_DIR = Path(__file__).resolve().parent.parent / "client"
 if str(CLIENT_DIR) not in sys.path:
@@ -142,4 +143,10 @@ def run_autotest(base_url: str = BASE_URL) -> bool:
     return pass_users and pass_products
 
 if __name__ == "__main__":
-    run_autotest()
+    parser = argparse.ArgumentParser(description="JSON Database API Autotest")
+    parser.add_argument("--url", default=BASE_URL, 
+                        help="Server URL (default: http://127.0.0.1:5000)")
+
+    args = parser.parse_args()
+
+    run_autotest(args.url)

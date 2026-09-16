@@ -1,9 +1,11 @@
 import requests
 from typing import List,  Dict, Optional, Any, Tuple
-
 from client_api import APIClient
+import argparse
 
 # TODO: add email format check and other checks
+
+BASE_URL = "http://localhost:5000"
 
 #===================
 #====== PRINT ======
@@ -236,8 +238,8 @@ def dispatch_command(client: APIClient, command: str, args: List[str]) -> bool:
         return True
     return handler(client, args)
 
-def interactive_console() -> None:
-    client = APIClient()
+def interactive_console(base_url: str) -> None:
+    client = APIClient(base_url)
     print_banner()
     while True:
         try:
@@ -248,7 +250,8 @@ def interactive_console() -> None:
         except ValueError as error:
             print(f"Argument format error: {error}")
         except requests.exceptions.ConnectionError:
-            print("Connection error:\nRun server on http://localhost:5000")
+            print("Connection error:\nRun server or input correct URL \
+                  'client.py --url <url>'")
         except KeyboardInterrupt:
             print("\nExit...")
             return
@@ -257,4 +260,10 @@ def interactive_console() -> None:
 
 
 if __name__ == "__main__":
-    interactive_console()
+    parser = argparse.ArgumentParser(description="JSON Database API Client")
+    parser.add_argument("--url", default=BASE_URL, 
+                        help="Server URL (default: http://127.0.0.1:5000)")
+    args = parser.parse_args()
+
+    print(f"Connecting to {args.url}...")
+    interactive_console(args.url)
