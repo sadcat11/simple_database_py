@@ -2,6 +2,7 @@ import requests
 from typing import List,  Dict, Optional, Any, Tuple
 from client_api import APIClient
 import argparse
+from client_validator import *
 
 # TODO: add email format check and other checks
 
@@ -64,10 +65,10 @@ exit                                  | exit
 check_server                          | check server
 """)
 
-def print_banner() -> None:
+def print_banner(base_url: str) -> None:
     print("""
 JSON DATABASE API CLIENT
-Server: http://localhost:5000
+Server: {base_url}}
 Input 'help' for a list of commands.
 """)
 
@@ -109,28 +110,13 @@ def cmd_exit(client: APIClient, args: List[str]) -> bool:
 #===================
 
 def cmd_create_user(client: APIClient, args: List[str]) -> bool:
-    if len(args) < 2:
-        print("Error: Enter name and email")
+    result, error = parse_and_validate(args, USER_VALIDATORS,
+                                       mode="create", optional_fields=["age"])
+    if error:
+        print(f"Error: {error}")
         return True
-
-    if args[-1].isdigit():
-        age = int(args[-1])
-        email = args[-2]
-        name = " ".join(args[:-2])
-    else:
-        age = 0
-        email = args[-1]
-        name = " ".join(args[:-1])
-
-    if "@" not in email:
-        print(f"Error: Email'{email}' should have '@'")
-        return True
-
-    if not name or not email:
-        print("Error: Name and email are required")
-        return True
-        
-    user = client.create_user(name, email, age)
+    
+    user = client.create_user(result["name"], result["email"], result["age"])
     print(f"User created: ID={user['id']}, {user['name']}")
     return True
 
@@ -150,12 +136,19 @@ def cmd_update_user_by_id(client: APIClient, args: List[str]) -> bool:
     if len(args) < 2:
         print("Error: Specify ID and field in field=value format")
         return True
-    user_id = int(args[0])
-    updates = parse_updates(args[1:])
-    if not updates:
-        print("Error: Invalid field format (use field=value)")
+
+    try:
+        user_id = int(args[0])
+    except ValueError:
+        print("Error: ID must be a number")
         return True
-    user = client.update_user_by_id(user_id, **updates)
+    
+    result, error = parse_and_validate(args[1:], USER_VALIDATORS, mode="update")
+    if error:
+        print(f"Error: {error}")
+        return True
+    
+    user = client.update_user(user_id, **result)
     print(f"Updated user: {user}" if user else f"User with ID={user_id} not found")
     return True
 
@@ -173,11 +166,13 @@ def cmd_delete_user_by_id(client: APIClient, args: List[str]) -> bool:
 #====================
 
 def cmd_create_product(client: APIClient, args: List[str]) -> bool:
-    if len(args) < 2:
-        print("Error: Enter name and price")
+    result, error = parse_and_validate(args, PRODUCT_VALIDATORS,
+                                       mode="create", optional_fields=["stock"])
+    if error:
+        print(f"Error: {error}")
         return True
-    stock = int(args[2]) if len(args) > 2 else 0
-    product = client.create_product(args[0], float(args[1]), stock)
+    
+    product = client.create_product(result["name"], result["price"], result["stock"])
     print(f"Product created: ID={product['id']}, {product['name']}")
     return True
 
@@ -197,12 +192,19 @@ def cmd_update_product_by_id(client: APIClient, args: List[str]) -> bool:
     if len(args) < 2:
         print("Error: Specify ID and field in field=value format")
         return True
-    product_id = int(args[0])
-    updates = parse_updates(args[1:])
-    if not updates:
-        print("Error: Invalid field format (use field=value)")
+
+    try:
+        product_id = int(args[0])
+    except ValueError:
+        print("Error: ID must be a number")
         return True
-    product = client.update_product_by_id(product_id, **updates)
+
+    result, error = parse_and_validate(args[1:], PRODUCT_VALIDATORS, mode="update")
+    if error:
+        print(f"Error: {error}")
+        return True
+
+    product = client.update_product_by_id(product_id, **result)
     print(f"Updated product: {product}" if product else f"Product with ID={product_id} not found")
     return True
 
@@ -240,7 +242,7 @@ def dispatch_command(client: APIClient, command: str, args: List[str]) -> bool:
 
 def interactive_console(base_url: str) -> None:
     client = APIClient(base_url)
-    print_banner()
+    print_banner(base_url)
     while True:
         try:
             command, args = parse_input(input("\n>>> "))

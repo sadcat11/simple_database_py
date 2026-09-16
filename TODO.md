@@ -7,7 +7,7 @@
 - [ ] Add server-side validation for user data
 
 ## Client
-- [ ] Add checks for user input
+- [+] Add checks for user input
 
 ## Autotest
 - [+] Add autotests for products
