@@ -10,4 +10,5 @@
 - [ ] Add checks for user input
 
 ## Autotest
-- [ ] Add autotests for products
+- [+] Add autotests for products
+- [ ] Add tests for new server and client checks
