@@ -1,6 +1,12 @@
 # simple_database_py
 Client-server simple database
 
+This database runs on Flask and REST API, using JSON file as storage.
+
+You can view database (JSON file) contents by HTTP server's link (server side).
+
+Other methods for working with the database can be called by the client from the client application.
+
 - [Quick start]((#Quick-start))
 
   - [Required]((##Required))
@@ -14,7 +20,7 @@ Client-server simple database
 - [Code architecture]((##Code-architecture))
 
 ## Quick start
-To use the client application, you must first start the server. To run automated tests, you must first start the server.
+To use the client application, you must first start the server.
 
 ### Required
 #### Python 3

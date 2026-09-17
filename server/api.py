@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from database import Database
 import argparse
 
@@ -110,6 +110,58 @@ def create_app(db_file: str) -> Flask:
     @app.route("/api/check_server", methods=["GET"])
     def check_server_check():
         return jsonify({"status": "ok", "message": "JSON Database API is running"})
+
+
+    @app.route("/", methods=["GET"])
+    def view_database():
+        users = db.get_all_users()
+        products = db.get_all_products()
+
+        users_html = "".join(
+            f"<tr><td>{u['id']}</td><td>{u['name']}</td>"
+            f"<td>{u['email']}</td><td>{u['age']}</td></tr>"
+            for u in users
+        )
+
+        products_html = "".join(
+            f"<tr><td>{p['id']}</td><td>{p['name']}</td>"
+            f"<td>{p['price']}</td><td>{p['stock']}</td></tr>"
+            for p in products
+        )
+
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>JSON database</title>
+            <style>
+                body {{ font-family: Arial, sans-serif; font-size: 26px; margin: 30px;
+                        color: #DCDCDC; background-color: #282828; }}
+                table {{ border-collapse: collapse; width: 100%; }}
+                th, td {{ font-size: 18px; border: 1px solid #000000; padding: 10px; }}
+                th {{ font-size: 22px; background-color: #1C1C1C; color: #BBBBBB; }}
+                tr:nth-child(even) {{ background-color: #363636; }}
+            </style>
+        </head>
+        <body>
+            <h1>JSON database viewer</h1>
+            <p>Database: {db_file}</p>
+
+            <h2>Users ({len(users)})</h2>
+            <table>
+                <tr><th>ID</th><th>Name</th><th>Email</th><th>Age</th></tr>
+                {users_html or "<tr><td colspan=4>No users</td></tr>"}
+            </table>
+
+            <h2>Products ({len(products)})</h2>
+            <table>
+                <tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th></tr>
+                {products_html or "<tr><td colspan=4>No products</td></tr>"}
+            </table>
+        </body>
+        </html>
+        """
+        return Response(html, mimetype="text/html")
 
     return app
 
