@@ -1,11 +1,13 @@
 import re
 from typing import List, Dict, Any, Tuple, Optional, Callable
 
+
 USER_VALIDATORS = {
     "name": lambda a: validate_name(a),
     "email": lambda a: validate_email(a),
     "age": lambda a: validate_age(a),
 }
+
 
 PRODUCT_VALIDATORS = {
     "name": lambda a: validate_name(a),
@@ -13,12 +15,14 @@ PRODUCT_VALIDATORS = {
     "stock": lambda a: validate_stock(a),
 }
 
+
 def validate_name(name: str) -> Tuple[bool, Optional[str]]:
     if not name or not name.strip():
         return False, None, "Name cannot be empty"
     if len(name.strip()) > 100:
         return False, None, "Name must be less than 100 characters"
     return True, name, None
+
 
 def validate_email(email: str) -> Tuple[bool, Optional[str]]:
     if not email:
@@ -31,6 +35,7 @@ def validate_email(email: str) -> Tuple[bool, Optional[str]]:
         return False, "Invalid email format (example: user@example.com)"
     return True, email, None
 
+
 def validate_price(price_str: str) -> Tuple[bool, Optional[float], Optional[str]]:
     try:
         price = float(price_str)
@@ -40,6 +45,7 @@ def validate_price(price_str: str) -> Tuple[bool, Optional[float], Optional[str]
     except ValueError:
         return False, None, "Price must be a number (example: 99.99)"
 
+
 def validate_age(age_str: str) -> Tuple[bool, Optional[int], Optional[str]]:
     try:
         age = int(age_str)
@@ -48,6 +54,7 @@ def validate_age(age_str: str) -> Tuple[bool, Optional[int], Optional[str]]:
         return True, age, None
     except ValueError:
         return False, None, "Age must be an integer (example: 22)"
+
 
 def validate_stock(stock_str: str) -> Tuple[bool, Optional[int], Optional[str]]:
     try:
@@ -59,6 +66,7 @@ def validate_stock(stock_str: str) -> Tuple[bool, Optional[int], Optional[str]]:
         return True, stock, None
     except ValueError:
         return False, None, "Stock must be an integer (example: 50)"
+
 
 Validator = Callable[[str], Tuple[bool, Optional[Any], Optional[str]]]
 
@@ -93,6 +101,7 @@ def parse_create(args: List[str], validators: Dict[str, Validator],
     
     return result, None
 
+
 def parse_update(args: List[str], validators: Dict[str, Validator]
                  ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     updates = {}
@@ -115,6 +124,7 @@ def parse_update(args: List[str], validators: Dict[str, Validator]
         updates[key] = parsed
     
     return updates, None
+
 
 def parse_and_validate(args: List[str], validators: Dict[str, Validator],
                        mode: str, optional_fields: Optional[List[str]] = None,

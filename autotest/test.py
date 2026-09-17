@@ -11,6 +11,7 @@ from client_api import APIClient
 
 BASE_URL = "http://localhost:5000"
 
+
 def test_users(client: APIClient) -> bool:
     created_user_id = None
     try:
@@ -67,6 +68,7 @@ def test_users(client: APIClient) -> bool:
                 print(f"\nCleanup: test user ID={created_user_id} deleted")
             except requests.RequestException:
                 print(f"\nWarning: Failed to delete test user ID={created_user_id}")
+
 
 def test_products(client: APIClient) -> bool:
     created_product_id = None
@@ -125,6 +127,7 @@ def test_products(client: APIClient) -> bool:
             except requests.RequestException:
                 print(f"\nWarning: Failed to delete test product ID={created_product_id}")
 
+
 def run_autotest(base_url: str = BASE_URL) -> bool:
     client = APIClient(base_url)
 
@@ -141,6 +144,7 @@ def run_autotest(base_url: str = BASE_URL) -> bool:
         print("=" * 30)
 
     return pass_users and pass_products
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="JSON Database API Autotest")

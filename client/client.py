@@ -6,6 +6,7 @@ from client_validator import *
 
 BASE_URL = "http://localhost:5000"
 
+
 #===================
 #====== PRINT ======
 #===================
@@ -18,6 +19,7 @@ def print_users(users: List[Dict]) -> None:
     for user in users:
         print(f"  [{user['id']}] {user['name']} <{user['email']}> (age: {user['age']})")
 
+
 def print_user_by_id(user: Optional[Dict], user_id: int) -> None:
     if not user:
         print(f"User with ID={user_id} not found")
@@ -27,6 +29,7 @@ def print_user_by_id(user: Optional[Dict], user_id: int) -> None:
     print(f"- Email: {user['email']}")
     print(f"- Age: {user['age']}")
 
+
 def print_products(products: List[Dict]) -> None:
     if not products:
         print("There are no products in the database")
@@ -34,6 +37,7 @@ def print_products(products: List[Dict]) -> None:
     print(f"\nNumber of products in the database: {len(products)}")
     for product in products:
         print(f"  [{product['id']}] {product['name']}: {product['price']} $ (stock: {product['stock']})")
+
 
 def print_product_by_id(product: Optional[Dict], product_id: int) -> None:
     if not product:
@@ -43,6 +47,7 @@ def print_product_by_id(product: Optional[Dict], product_id: int) -> None:
     print(f"- Name: {product['name']}")
     print(f"- Price: {product['price']} $")
     print(f"- Stock: {product['stock']}")
+
 
 def print_help() -> None:
     print("""
@@ -86,9 +91,11 @@ def parse_updates(args: List[str]) -> Dict[str, Any]:
     pairs = (arg.split("=", 1) for arg in args if "=" in arg)
     return {key: convert(value) for key, value in pairs if key}
 
+
 def parse_input(user_input: str) -> Tuple[str, List[str]]:
     parts = user_input.strip().split()
     return (parts[0].lower(), parts[1:]) if parts else ("", [])
+
 
 def cmd_check_server(client: APIClient, args: List[str]) -> bool:
     result = client.check_server()
@@ -96,12 +103,15 @@ def cmd_check_server(client: APIClient, args: List[str]) -> bool:
     print(f"Message: {result['message']}")
     return True
 
+
 def cmd_help(client: APIClient, args: List[str]) -> bool:
     print_help()
     return True
 
+
 def cmd_exit(client: APIClient, args: List[str]) -> bool:
     return True
+
 
 #===================
 #====== USERS ======
@@ -118,9 +128,11 @@ def cmd_create_user(client: APIClient, args: List[str]) -> bool:
     print(f"User created: ID={user['id']}, {user['name']}")
     return True
 
+
 def cmd_users(client: APIClient, args: List[str]) -> bool:
     print_users(client.get_all_users())
     return True
+
 
 def cmd_user_by_id(client: APIClient, args: List[str]) -> bool:
     if not args:
@@ -129,6 +141,7 @@ def cmd_user_by_id(client: APIClient, args: List[str]) -> bool:
     user_id = int(args[0])
     print_user_by_id(client.get_user_by_id(user_id), user_id)
     return True
+
 
 def cmd_update_user_by_id(client: APIClient, args: List[str]) -> bool:
     if len(args) < 2:
@@ -150,6 +163,7 @@ def cmd_update_user_by_id(client: APIClient, args: List[str]) -> bool:
     print(f"Updated user: {user}" if user else f"User with ID={user_id} not found")
     return True
 
+
 def cmd_delete_user_by_id(client: APIClient, args: List[str]) -> bool:
     if not args:
         print("Error: Enter a user ID")
@@ -158,6 +172,7 @@ def cmd_delete_user_by_id(client: APIClient, args: List[str]) -> bool:
     user = client.delete_user_by_id(user_id)
     print(f"User deleted: ID={user['id']}, {user['name']}" if user else f"User with ID={user_id} not found")
     return True
+
 
 #====================
 #===== PRODUCTS =====
@@ -174,9 +189,11 @@ def cmd_create_product(client: APIClient, args: List[str]) -> bool:
     print(f"Product created: ID={product['id']}, {product['name']}")
     return True
 
+
 def cmd_products(client: APIClient, args: List[str]) -> bool:
     print_products(client.get_all_products())
     return True
+
 
 def cmd_product_by_id(client: APIClient, args: List[str]) -> bool:
     if not args:
@@ -185,6 +202,7 @@ def cmd_product_by_id(client: APIClient, args: List[str]) -> bool:
     product_id = int(args[0])
     print_product_by_id(client.get_product_by_id(product_id), product_id)
     return True
+
 
 def cmd_update_product_by_id(client: APIClient, args: List[str]) -> bool:
     if len(args) < 2:
@@ -206,6 +224,7 @@ def cmd_update_product_by_id(client: APIClient, args: List[str]) -> bool:
     print(f"Updated product: {product}" if product else f"Product with ID={product_id} not found")
     return True
 
+
 def cmd_delete_product_by_id(client: APIClient, args: List[str]) -> bool:
     if not args:
         print("Error: Enter a product ID")
@@ -214,6 +233,7 @@ def cmd_delete_product_by_id(client: APIClient, args: List[str]) -> bool:
     product = client.delete_product_by_id(product_id)
     print(f"Product deleted: ID={product['id']}, {product['name']}" if product else f"Product with ID={product_id} not found")
     return True
+
 
 COMMANDS = {
     "help": cmd_help,
@@ -231,12 +251,14 @@ COMMANDS = {
     "exit": cmd_exit,
 }
 
+
 def dispatch_command(client: APIClient, command: str, args: List[str]) -> bool:
     handler = COMMANDS.get(command)
     if handler is None:
         print(f"Unknown command: {command}. Type 'help' for a list of commands")
         return False
     return handler(client, args)
+
 
 def interactive_console(base_url: str) -> None:
     client = APIClient(base_url)
@@ -258,12 +280,14 @@ def interactive_console(base_url: str) -> None:
         except requests.RequestException as error:
             print(f"HTTP Error: {error}")
 
+
 __all__ = [
     "cmd_create_user",
     "cmd_create_product",
     "cmd_update_user_by_id",
     "cmd_update_product_by_id",
 ]
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="JSON Database API Client")
@@ -273,4 +297,3 @@ if __name__ == "__main__":
 
     print(f"Connecting to {args.url}...")
     interactive_console(args.url)
-

@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from database import Database
 import argparse
 
+
 def create_app(db_file: str) -> Flask:
     app = Flask(__name__)
     db = Database(db_file)
@@ -9,6 +10,7 @@ def create_app(db_file: str) -> Flask:
     #===================
     #====== USERS ======
     #===================
+
     @app.route("/api/users", methods=["POST"])
     def create_user():
         data = request.get_json()
@@ -23,9 +25,11 @@ def create_app(db_file: str) -> Flask:
         user = db.create_user(name=name, email=email, age=age)
         return jsonify(user), 201
 
+
     @app.route("/api/users", methods=["GET"])
     def get_all_users():
         return jsonify(db.get_all_users())
+
 
     @app.route("/api/users/<int:user_id>", methods=["GET"])
     def get_user_by_id(user_id):
@@ -33,6 +37,7 @@ def create_app(db_file: str) -> Flask:
         if user:
             return jsonify(user)
         return jsonify({"error": "User not found"}), 404
+
 
     @app.route("/api/users/<int:user_id>", methods=["PUT"])
     def update_user_by_id(user_id):
@@ -43,6 +48,7 @@ def create_app(db_file: str) -> Flask:
             return jsonify(user)
         return jsonify({"error": "User not found"}), 404
 
+
     @app.route("/api/users/<int:user_id>", methods=["DELETE"])
     def delete_user_by_id(user_id):
         deleted = db.delete_user_by_id(user_id)
@@ -50,9 +56,11 @@ def create_app(db_file: str) -> Flask:
             return jsonify(deleted)
         return jsonify({"error": "User not found"}), 404
 
+
     #====================
     #===== PRODUCTS =====
     #====================
+
     @app.route("/api/products", methods=["POST"])
     def create_product():
         data = request.get_json()
@@ -67,9 +75,11 @@ def create_app(db_file: str) -> Flask:
         product = db.create_product(name=name, price=price, stock=stock)
         return jsonify(product), 201
 
+
     @app.route("/api/products", methods=["GET"])
     def get_all_products():
         return jsonify(db.get_all_products())
+
 
     @app.route("/api/products/<int:product_id>", methods=["GET"])
     def get_product_by_id(product_id):
@@ -77,6 +87,7 @@ def create_app(db_file: str) -> Flask:
         if product:
             return jsonify(product)
         return jsonify({"error": "Product not found"}), 404
+
 
     @app.route("/api/products/<int:product_id>", methods=["PUT"])
     def update_product_by_id(product_id):
@@ -87,12 +98,14 @@ def create_app(db_file: str) -> Flask:
             return jsonify(product)
         return jsonify({"error": "Product not found"}), 404
 
+
     @app.route("/api/products/<int:product_id>", methods=["DELETE"])
     def delete_product_by_id(product_id):
         deleted = db.delete_product_by_id(product_id)
         if deleted:
             return jsonify(deleted)
         return jsonify({"error": "Product not found"}), 404
+
 
     @app.route("/api/check_server", methods=["GET"])
     def check_server_check():
