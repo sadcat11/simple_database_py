@@ -29,7 +29,7 @@ pip install flask
 Start
 ```
 cd server
-python api.py
+python api.py [--host <host>] [--port <port>] [--db <db_file_json>]
 ```
 Stop
 ```
@@ -37,10 +37,14 @@ ctrl + c
 ```
 
 ### Client
+Before starting the client, you must first start the server.
+
+The server's `host` and `port` must match the client's `URL`.
+
 Start
 ```
 cd client
-python client.py
+python client.py [--url <url>]
 ```
 Stop
 ```
@@ -48,10 +52,15 @@ ctrl + c
 ```
 
 ### Autotest
+To run `test_validation.py`, you don't need to start the server.
+
+To run `test.py`, you must first start the server.
+
 Start
 ```
 cd autotest
-python test.py
+python test.py [--url <url>]
+python -m pytest test_validation.py -v
 ```
 Stop
 ```
