@@ -52,9 +52,13 @@ ctrl + c
 ```
 
 ### Autotest
+`test.py` checks server side. `test_validation.py` checks client side (validation).
+
 To run `test_validation.py`, you don't need to start the server.
 
 To run `test.py`, you must first start the server.
+
+The server's `host` and `port` must match the test's `URL`.
 
 Start
 ```
