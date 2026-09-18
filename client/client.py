@@ -17,7 +17,7 @@ def print_users(users: List[Dict]) -> None:
         return
     print(f"\nNumber of users in the database: {len(users)}")
     for user in users:
-        print(f"  [{user['id']}] {user['name']} <{user['email']}> (age: {user['age']})")
+        print(f"[{user['id']}] {user['name']} <{user['email']}> (age: {user['age']})")
 
 
 def print_user_by_id(user: Optional[Dict], user_id: int) -> None:
@@ -36,7 +36,9 @@ def print_products(products: List[Dict]) -> None:
         return
     print(f"\nNumber of products in the database: {len(products)}")
     for product in products:
-        print(f"  [{product['id']}] {product['name']}: {product['price']} $ (stock: {product['stock']})")
+        print(
+f"""[{product['id']}] {product['name']}: {product['price']} $
+    |(stock: {product['stock']}) Number of purchases: {product['number_of_purchases']}""")
 
 
 def print_product_by_id(product: Optional[Dict], product_id: int) -> None:
@@ -47,25 +49,29 @@ def print_product_by_id(product: Optional[Dict], product_id: int) -> None:
     print(f"- Name: {product['name']}")
     print(f"- Price: {product['price']} $")
     print(f"- Stock: {product['stock']}")
+    print(f"- Number of purchases: {product['number_of_purchases']}")
 
 
 def print_help() -> None:
     print("""
-users                                 | show all users
-user <id>                             | show user with id
-create_user <name> <email> [age]      | create user
-update_user <id> <field>=<value>      | update user
-delete_user <id>                      | delete user
-
-products                              | show all products
-product <id>                          | show product with id
-create_product <name> <price> [stock] | create product
-update_product <id> <field>=<value>   | update product
-delete_product <id>                   | delete product
-
-help                                  | show command list
-exit                                  | exit
-check_server                          | check server
+ _______________________________________________________________
+|users                                 | show all users         |
+|user <id>                             | show user with id      |
+|create_user <name> <email> [age]      | create user            |
+|update_user <id> <field>=<value>      | update user            |
+|delete_user <id>                      | delete user            |
+|______________________________________|________________________|
+|products                              | show all products      |
+|product <id>                          | show product with id   |
+|create_product <name> <price>         | create product         |
+|    <stock> <number_of_purchases>     |                        |
+|update_product <id> <field>=<value>   | update product         |
+|delete_product <id>                   | delete product         |
+|______________________________________|________________________|
+|help                                  | show command list      |
+|exit                                  | exit                   |
+|check_server                          | check server           |
+|______________________________________|________________________|
 """)
 
 def print_banner(base_url: str) -> None:
@@ -119,7 +125,8 @@ def cmd_exit(client: APIClient, args: List[str]) -> bool:
 
 def cmd_create_user(client: APIClient, args: List[str]) -> bool:
     result, error = parse_and_validate(args, USER_VALIDATORS,
-                                       mode="create", optional_fields=["age"])
+                                       mode="create", multi_word_fields=["name"],
+                                       optional_fields=["age"])
     if error:
         print(f"Error: {error}")
         return False
@@ -180,12 +187,13 @@ def cmd_delete_user_by_id(client: APIClient, args: List[str]) -> bool:
 
 def cmd_create_product(client: APIClient, args: List[str]) -> bool:
     result, error = parse_and_validate(args, PRODUCT_VALIDATORS,
-                                       mode="create", optional_fields=["stock"])
+                                       mode="create", multi_word_fields=["name"])
     if error:
         print(f"Error: {error}")
         return False
     
-    product = client.create_product(result["name"], result["price"], result["stock"])
+    product = client.create_product(result["name"], result["price"],
+                                    result["stock"], result["number_of_purchases"])
     print(f"Product created: ID={product['id']}, {product['name']}")
     return True
 

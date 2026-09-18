@@ -65,10 +65,12 @@ class APIClient:
         return response.json()
 
 
-    def create_product(self, name: str, price: float = 0.0, stock: int = 0) -> Dict:
+    def create_product(self, name: str, price: float = 0.0,
+                       stock: int = 0, number_of_purchases: int = 0) -> Dict:
         response = requests.post(
             f"{self.base_url}/api/products",
-            json={"name": name, "price": price, "stock": stock},
+            json={"name": name, "price": price,
+                  "stock": stock, "number_of_purchases": number_of_purchases},
         )
         response.raise_for_status()
         return response.json()

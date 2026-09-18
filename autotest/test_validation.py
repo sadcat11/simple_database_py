@@ -52,9 +52,10 @@ class TestCmdCreateProduct:
             "name": "prod prod",
             "price": 222.22,
             "stock": 23,
+            "number_of_purchases": 11,
         }
 
-        result = cmd_create_product(client, ["prod prod", "222.22", "23"])
+        result = cmd_create_product(client, ["prod prod", "222.22", "23", "11"])
 
         assert result is True
         assert client.create_product.called
@@ -65,9 +66,12 @@ class TestCmdCreateProduct:
         [
             ["prod prod"],
             ["prod prod", "price"],
-            ["prod prod", "-10", "3"],
-            ["prod prod", "222", "2.2"],
-            ["prod prod", "222", "-1"],
+            ["prod prod", "-10", "3", "1"],
+            ["prod prod", "222", "2.2", "1"],
+            ["prod prod", "222.4", "-1", "1"],
+            ["prod prod", "-10", "3", "-1"],
+            ["prod prod", "222", "2", "abc"],
+            ["prod prod", "222", "2.2", "-333"],
         ],
     )
     def test_returns_false_on_validation_error(self, client, capsys, args):

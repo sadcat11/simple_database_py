@@ -84,7 +84,7 @@ def test_products(client: APIClient) -> bool:
         print(f"Number of products found: {len(products)}")
 
         print("\n[3/6] Creating a test product...")
-        created = client.create_product("Test Product", 123, 22)
+        created = client.create_product("Test Product", 123, 22, 11)
         created_product_id = created["id"]
         assert created["name"] == "Test Product", "Product: error on creation"
         print(f"Product created: ID={created_product_id}")
