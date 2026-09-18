@@ -12,3 +12,6 @@
 ## Autotest
 - [+] Add autotests for products
 - [ ] Add tests for new server and client checks
+
+## Bug
+- [ ] Fix users and products create with multiple name parts when creates with optional field
