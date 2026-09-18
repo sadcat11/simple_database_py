@@ -20,6 +20,7 @@ class Product:
     name: str
     price: float
     stock: int
+    number_of_purchases: int
 
 
 class Database:
@@ -95,10 +96,11 @@ class Database:
 #===== PRODUCTS =====
 #====================
 
-    def create_product(self, name: str, price: float, stock: int) -> Dict:
+    def create_product(self, name: str, price: float, stock: int, number_of_purchases: int) -> Dict:
         data = self._load()
         max_id = max((p["id"] for p in data["products"]), default=0)
-        new_product = {"id": max_id + 1, "name": name, "price": price, "stock": stock}
+        new_product = {"id": max_id + 1, "name": name, "price": price,
+                       "stock": stock, "number_of_purchases": number_of_purchases}
         data["products"].append(new_product)
         self._save(data)
         return new_product

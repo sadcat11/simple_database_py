@@ -71,8 +71,10 @@ def create_app(db_file: str) -> Flask:
         name = data.get("name")
         price = data.get("price", 0.0)
         stock = data.get("stock", 0)
+        number_of_purchases = data.get("number_of_purchases", 0)
 
-        product = db.create_product(name=name, price=price, stock=stock)
+        product = db.create_product(name=name, price=price,
+                                    stock=stock, number_of_purchases=number_of_purchases)
         return jsonify(product), 201
 
 
@@ -124,8 +126,8 @@ def create_app(db_file: str) -> Flask:
         )
 
         products_html = "".join(
-            f"<tr><td>{p['id']}</td><td>{p['name']}</td>"
-            f"<td>{p['price']}</td><td>{p['stock']}</td></tr>"
+            f"<tr><td>{p['id']}</td><td>{p['name']}</td><td>{p['price']}</td>"
+            f"<td>{p['stock']}</td><td>{p['number_of_purchases']}</td></tr>"
             for p in products
         )
 
@@ -155,8 +157,9 @@ def create_app(db_file: str) -> Flask:
 
             <h2>Products ({len(products)})</h2>
             <table>
-                <tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th></tr>
-                {products_html or "<tr><td colspan=4>No products</td></tr>"}
+                <tr><th>ID</th><th>Name</th><th>Price</th>
+                <th>Stock</th><th>Number of purchases</th></tr>
+                {products_html or "<tr><td colspan=5>No products</td></tr>"}
             </table>
         </body>
         </html>

@@ -2,29 +2,31 @@
   "users": [
     {
       "id": 1,
-      "name": 123,
-      "email": "ddd@email",
+      "name": "www eee",
+      "email": "qqq@qq.ee",
       "age": 33
     },
     {
       "id": 2,
-      "name": "asd",
-      "email": "qweqq@email",
-      "age": 33
-    },
-    {
-      "id": 3,
       "name": "qwe asd",
-      "email": "www@ww",
-      "age": 54
+      "email": "qqqss@qq.ee",
+      "age": 44
     }
   ],
   "products": [
     {
       "id": 1,
-      "name": "prodname",
+      "name": "prod qq",
       "price": 222.0,
-      "stock": 33
+      "stock": 33,
+      "number_of_purchases": 11
+    },
+    {
+      "id": 2,
+      "name": "pr od uct",
+      "price": 444.0,
+      "stock": 123,
+      "number_of_purchases": 33
     }
   ]
 }

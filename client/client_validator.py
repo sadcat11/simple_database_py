@@ -13,6 +13,7 @@ PRODUCT_VALIDATORS = {
     "name": lambda a: validate_name(a),
     "price": lambda a: validate_price(a),
     "stock": lambda a: validate_stock(a),
+    "number_of_purchases": lambda a: validate_number_of_purchases(a),
 }
 
 
@@ -68,15 +69,53 @@ def validate_stock(stock_str: str) -> Tuple[bool, Optional[int], Optional[str]]:
         return False, None, "Stock must be an integer (example: 50)"
 
 
+def validate_number_of_purchases(number_of_purchases: str) -> Tuple[bool, Optional[int], Optional[str]]:
+    return validate_stock(number_of_purchases)
+
+
 Validator = Callable[[str], Tuple[bool, Optional[Any], Optional[str]]]
 
+
+def merge_multi_word_args(args: List[str], validators: Dict[str, Validator],
+                          multi_word_fields: List[str],
+) -> List[str]:
+    keys = list(validators.keys())
+    processed_args = []
+    arg_idx = 0
+
+    for i, key in enumerate(keys):
+        if key in multi_word_fields:
+            remaining_fields = len(keys) - i - 1
+            remaining_args = len(args) - arg_idx
+
+            if remaining_args > remaining_fields:
+                words_count = remaining_args - remaining_fields
+                value = " ".join(args[arg_idx:arg_idx + words_count])
+                arg_idx += words_count
+            else:
+                value = args[arg_idx]
+                arg_idx += 1
+        else:
+            value = args[arg_idx]
+            arg_idx += 1
+        
+        processed_args.append(value)
+    
+    return processed_args
+
+
 def parse_create(args: List[str], validators: Dict[str, Validator],
+                 multi_word_fields: Optional[List[str]] = None,
                  optional_fields: Optional[List[str]] = None
                  ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+    multi_word_fields = multi_word_fields or []
     optional_fields = optional_fields or []
     result = {}
     keys = list(validators.keys())
-    
+
+    if multi_word_fields and len(args) > len(keys):
+        args = merge_multi_word_args(args, validators, multi_word_fields)
+
     for i, key in enumerate(keys):
         if i < len(args):
             value = args[i]
@@ -127,11 +166,12 @@ def parse_update(args: List[str], validators: Dict[str, Validator]
 
 
 def parse_and_validate(args: List[str], validators: Dict[str, Validator],
-                       mode: str, optional_fields: Optional[List[str]] = None,
+                       mode: str, multi_word_fields: Optional[List[str]] = None,
+                       optional_fields: Optional[List[str]] = None,
 ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     if mode == "update":
         return parse_update(args, validators)
     elif mode == "create":
-        return parse_create(args, validators, optional_fields)
+        return parse_create(args, validators, multi_word_fields, optional_fields)
     else:
         return None, f"Unknown mode '{mode}'"
