@@ -57,14 +57,14 @@ def print_help() -> None:
  _______________________________________________________________
 |users                                 | show all users         |
 |user <id>                             | show user with id      |
-|create_user <name> <email> [age]      | create user            |
+|create_user <"name"> <email> [age]    | create user            |
 |update_user <id> <field>=<value>      | update user            |
 |delete_user <id>                      | delete user            |
 |______________________________________|________________________|
 |products                              | show all products      |
 |product <id>                          | show product with id   |
-|create_product <name> <price>         | create product         |
-|    <stock> <number_of_purchases>     |                        |
+|create_product <"name"> <price>       | create product         |
+|    <stock> [number_of_purchases]     |                        |
 |update_product <id> <field>=<value>   | update product         |
 |delete_product <id>                   | delete product         |
 |______________________________________|________________________|
@@ -75,9 +75,9 @@ def print_help() -> None:
 """)
 
 def print_banner(base_url: str) -> None:
-    print("""
+    print(f"""
 JSON DATABASE API CLIENT
-Server: {base_url}}
+Server: {base_url}
 Input 'help' for a list of commands.
 """)
 
@@ -125,13 +125,13 @@ def cmd_exit(client: APIClient, args: List[str]) -> bool:
 
 def cmd_create_user(client: APIClient, args: List[str]) -> bool:
     result, error = parse_and_validate(args, USER_VALIDATORS,
-                                       mode="create", multi_word_fields=["name"],
+                                       mode="create",
                                        optional_fields=["age"])
     if error:
         print(f"Error: {error}")
         return False
     
-    user = client.create_user(result["name"], result["email"], result["age"])
+    user = client.create_user(result["name"], result["email"], result.get("age", 0))
     print(f"User created: ID={user['id']}, {user['name']}")
     return True
 
@@ -187,13 +187,14 @@ def cmd_delete_user_by_id(client: APIClient, args: List[str]) -> bool:
 
 def cmd_create_product(client: APIClient, args: List[str]) -> bool:
     result, error = parse_and_validate(args, PRODUCT_VALIDATORS,
-                                       mode="create", multi_word_fields=["name"])
+                                       mode="create",
+                                       optional_fields=["number_of_purchases"])
     if error:
         print(f"Error: {error}")
         return False
     
     product = client.create_product(result["name"], result["price"],
-                                    result["stock"], result["number_of_purchases"])
+                                    result["stock"], result.get("number_of_purchases", 0))
     print(f"Product created: ID={product['id']}, {product['name']}")
     return True
 
