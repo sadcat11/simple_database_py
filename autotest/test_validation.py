@@ -18,12 +18,12 @@ class TestCmdCreateUser:
     def test_returns_true_on_success(self, client, capsys):
         client.create_user.return_value = {
             "id": 1,
-            "name": "user resu",
+            "name": "\"user resu\"",
             "email": "user@mail.dom",
             "age": 22,
         }
 
-        result = cmd_create_user(client, ["user resu", "user@mail.dom", "22"])
+        result = cmd_create_user(client, ["\"user resu\"", "user@mail.dom", "22"])
 
         assert result is True
         assert client.create_user.called
@@ -32,10 +32,12 @@ class TestCmdCreateUser:
     @pytest.mark.parametrize(
         "args",
         [
-            ["user resu"],
-            ["user resu", "mainmail", "22"],
-            ["user resu", "user@mail.dom", "0"],
-            ["user resu", "user@mail.dom", "222"],
+            ["\"user resu\""],
+            ["\"user resu\"", "mainmail", "22"],
+            ["\"user resu\"", "user@mail.dom", "0"],
+            ["\"user resu\"", "user@mail.dom", "222"],
+            ["\"user resu\"", "user@maildom", "22"],
+            ["\"user resu\"", "usermail.dom", "22"],
         ],
     )
     def test_returns_false_on_validation_error(self, client, capsys, args):
@@ -49,13 +51,13 @@ class TestCmdCreateProduct:
     def test_returns_true_on_success(self, client, capsys):
         client.create_product.return_value = {
             "id": 1,
-            "name": "prod prod",
+            "name": "\"prod prod\"",
             "price": 222.22,
             "stock": 23,
             "number_of_purchases": 11,
         }
 
-        result = cmd_create_product(client, ["prod prod", "222.22", "23", "11"])
+        result = cmd_create_product(client, ["\"prod prod\"", "222.22", "23", "11"])
 
         assert result is True
         assert client.create_product.called
@@ -64,14 +66,14 @@ class TestCmdCreateProduct:
     @pytest.mark.parametrize(
         "args",
         [
-            ["prod prod"],
-            ["prod prod", "price"],
-            ["prod prod", "-10", "3", "1"],
-            ["prod prod", "222", "2.2", "1"],
-            ["prod prod", "222.4", "-1", "1"],
-            ["prod prod", "-10", "3", "-1"],
-            ["prod prod", "222", "2", "abc"],
-            ["prod prod", "222", "2.2", "-333"],
+            ["\"prod prod\""],
+            ["\"prod prod\"", "price"],
+            ["\"prod prod\"", "-10", "3", "1"],
+            ["\"prod prod\"", "222", "2.2", "1"],
+            ["\"prod prod\"", "222.4", "-1", "1"],
+            ["\"prod prod\"", "-10", "3", "-1"],
+            ["\"prod prod\"", "222", "2", "abc"],
+            ["\"prod prod\"", "222", "2.2", "-333"],
         ],
     )
     def test_returns_false_on_validation_error(self, client, capsys, args):
