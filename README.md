@@ -7,17 +7,17 @@ You can view database (JSON file) contents by HTTP server's link (server side).
 
 Other methods for working with the database can be called by the client from the client application.
 
-- [Quick start]((#Quick-start))
+- [Quick start](#quick-start)
 
-  - [Required]((##Required))
+  - [Required](#required)
 
-  - [Server]((##Server))
+  - [Server](#server)
 
-  - [Client]((##Client))
+  - [Client](#client)
 
-  - [Autotest]((##Autotest))
+  - [Autotest](#autotest)
 
-- [Code architecture]((##Code-architecture))
+- [Code architecture](#code-architecture)
 
 ## Quick start
 To use the client application, you must first start the server.
