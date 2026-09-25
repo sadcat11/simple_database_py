@@ -1,9 +1,13 @@
 # simple_database_py
 Client-server simple database
 
-This database runs on Flask and REST API, using JSON file as storage.
+Stable version branch: `1.0_flask_rest_version` (runs on Flask and REST API, using JSON file as storage).
 
-You can view database (JSON file) contents by HTTP server's link (server side).
+Current version branch:
+
+This database runs on `FastAPI` and `PostgreSQL` with `asyncio`.
+
+You can view contents by HTTP server's link (server side).
 
 Other methods for working with the database can be called by the client from the client application.
 
@@ -26,16 +30,16 @@ To use the client application, you must first start the server.
 #### Python 3
 Python must be installed to run the application.
 The required packages are listed below.
-#### Flask
+#### Tools
 ```
-pip install flask
+pip install fastapi uvicorn asyncpg
 ```
 
 ### Server
 Start
 ```
 cd server
-python api.py [--host <host>] [--port <port>] [--db <db_file_json>]
+python api.py [--host <host>] [--port <port>] [--db <database>] [--db-user <user>] [--db-pass <password>]
 ```
 Stop
 ```
@@ -78,7 +82,7 @@ ctrl + c
 ```
 
 ## Code architecture
-The `server` folder contains the code files for server operation and the database itself in JSON format.
+The `server` folder contains the code files for server operation.
 
 The `client` folder contains the files for client operation.
 

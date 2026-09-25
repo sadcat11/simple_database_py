@@ -1,139 +1,227 @@
-import json
-import os
-from dataclasses import dataclass
+import asyncpg
 from typing import List, Dict, Optional
 
-DB_FILE = "base.json"
+
+DB_HOST = "localhost"
+DB_NAME = "base"
+DB_USER = "user"
+DB_PASSWORD = "password"
 
 
-@dataclass
-class User:
-    id: int
-    name: str
-    email: str
-    age: int
-
-
-@dataclass
-class Product:
-    id: int
-    name: str
-    price: float
-    stock: int
-    number_of_purchases: int
-
-
-class Database:
-    def __init__(self, db_file: str = DB_FILE):
-        self.db_file = db_file
-        if not os.path.exists(self.db_file):
-            self._init_db()
-
-# Initializing an empty database
-    def _init_db(self):
-        self._save({"users": [], "products": []})
-
-# Loading data from JSON
-    def _load(self) -> Dict[str, List]:
-        if not os.path.exists(self.db_file):
-            return {"users": [], "products": []}
-        with open(self.db_file, "r", encoding="utf-8") as f:
-            return json.load(f)
-
-# Saving data to JSON
-    def _save(self, data: Dict[str, List]):
-        with open(self.db_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+async def get_connection():
+    return await asyncpg.connect(
+        host=DB_HOST,
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD
+    )
 
 
 #===================
 #====== USERS ======
 #===================
 
-    def create_user(self, name: str, email: str, age: int) -> Dict:
-        data = self._load()
-        max_id = max((u["id"] for u in data["users"]), default=0)
-        new_user = {"id": max_id + 1, "name": name, "email": email, "age": age}
-        data["users"].append(new_user)
-        self._save(data)
-        return new_user
+
+async def create_user(name: str, email: str, age: int) -> Dict:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow(
+            "INSERT INTO users (name, email, age) "
+            "VALUES ($1, $2, $3) RETURNING id, name, email, age",
+            name, email, age
+        )
+        return {"id": row["id"], "name": row["name"], "email": row["email"], "age": row["age"]}
+
+    finally:
+        await conn.close()
 
 
-    def get_all_users(self) -> List[Dict]:
-        data = self._load()
-        return data.get("users", [])
+async def get_all_users() -> List[Dict]:
+    conn = await get_connection()
+    try:
+        rows = await conn.fetch("SELECT id, name, email, age FROM users")
+        result = []
+        for r in rows:
+            result.append({
+                "id": r["id"],
+                "name": r["name"],
+                "email": r["email"],
+                "age": r["age"]
+            })
+        return result
+
+    finally:
+        await conn.close()
 
 
-    def get_user_by_id(self, user_id: int) -> Optional[Dict]:
-        users = self.get_all_users()
-        for user in users:
-            if user["id"] == user_id:
-                return user
-        return None
+async def get_user_by_id(user_id: int) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow("SELECT id, name, email, age FROM users WHERE id = $1", user_id)
+        if row:
+            return {"id": row["id"], "name": row["name"], "email": row["email"], "age": row["age"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
 
 
-    def update_user_by_id(self, user_id: int, **kwargs) -> Optional[Dict]:
-        data = self._load()
-        for i, user in enumerate(data["users"]):
-            if user["id"] == user_id:
-                data["users"][i].update(kwargs)
-                self._save(data)
-                return data["users"][i]
-        return None
+async def update_user_by_id(user_id: int, **kwargs) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        # Build dynamic update query
+        updates = []
+        values = []
+        for key, value in kwargs.items():
+            if value is not None:
+                updates.append(f"{key} = ${len(values) + 1}")
+                values.append(value)
+
+        if not updates:
+            return None
+
+        values.append(user_id)
+        query = (f"UPDATE users SET {', '.join(updates)} "
+                 f"WHERE id = ${len(values)} RETURNING id, name, email, age")
+        row = await conn.fetchrow(query, *values)
+        if row:
+            return {"id": row["id"], "name": row["name"], "email": row["email"], "age": row["age"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
 
 
-    def delete_user_by_id(self, user_id: int) -> Optional[Dict]:
-        data = self._load()
-        for i, user in enumerate(data["users"]):
-            if user["id"] == user_id:
-                deleted = data["users"].pop(i)
-                self._save(data)
-                return deleted
-        return None
+async def delete_user_by_id(user_id: int) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow(
+            "DELETE FROM users "
+            "WHERE id = $1 RETURNING id, name, email, age",
+            user_id
+        )
+        if row:
+            return {"id": row["id"], "name": row["name"], "email": row["email"], "age": row["age"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
 
 
 #====================
 #===== PRODUCTS =====
 #====================
 
-    def create_product(self, name: str, price: float, stock: int, number_of_purchases: int) -> Dict:
-        data = self._load()
-        max_id = max((p["id"] for p in data["products"]), default=0)
-        new_product = {"id": max_id + 1, "name": name, "price": price,
-                       "stock": stock, "number_of_purchases": number_of_purchases}
-        data["products"].append(new_product)
-        self._save(data)
-        return new_product
+
+async def create_product(name: str, price: float, stock: int, number_of_purchases: int) -> Dict:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow(
+            "INSERT INTO products (name, price, stock, number_of_purchases) "
+            "VALUES ($1, $2, $3, $4) RETURNING id, name, price, stock, number_of_purchases",
+            name, price, stock, number_of_purchases
+        )
+        return {"id": row["id"],
+                "name": row["name"],
+                "price": row["price"],
+                "stock": row["stock"],
+                "number_of_purchases": row["number_of_purchases"]}
+
+    finally:
+        await conn.close()
 
 
-    def get_all_products(self) -> List[Dict]:
-        data = self._load()
-        return data.get("products", [])
+async def get_all_products() -> List[Dict]:
+    conn = await get_connection()
+    try:
+        rows = await conn.fetch("SELECT id, name, price, stock, number_of_purchases "
+                                "FROM products")
+        result = []
+        for r in rows:
+            result.append({
+                "id": r["id"],
+                "name": r["name"],
+                "price": r["price"],
+                "stock": r["stock"],
+                "number_of_purchases": r["number_of_purchases"]
+            })
+        return result
+
+    finally:
+        await conn.close()
 
 
-    def get_product_by_id(self, product_id: int) -> Optional[Dict]:
-        products = self.get_all_products()
-        for product in products:
-            if product["id"] == product_id:
-                return product
-        return None
+async def get_product_by_id(product_id: int) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow(
+            "SELECT id, name, price, stock, number_of_purchases "
+            "FROM products WHERE id = $1",
+            product_id
+        )
+        if row:
+            return {"id": row["id"],
+                    "name": row["name"],
+                    "price": row["price"],
+                    "stock": row["stock"],
+                    "number_of_purchases": row["number_of_purchases"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
 
 
-    def update_product_by_id(self, product_id: int, **kwargs) -> Optional[Dict]:
-        data = self._load()
-        for i, product in enumerate(data["products"]):
-            if product["id"] == product_id:
-                data["products"][i].update(kwargs)
-                self._save(data)
-                return data["products"][i]
-        return None
+async def update_product_by_id(product_id: int, **kwargs) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        # Build dynamic update query
+        updates = []
+        values = []
+        for key, value in kwargs.items():
+            if value is not None:
+                updates.append(f"{key} = ${len(values) + 1}")
+                values.append(value)
+
+        if not updates:
+            return None
+
+        values.append(product_id)
+        query = (f"UPDATE products SET {', '.join(updates)} "
+                 f"WHERE id = ${len(values)} RETURNING id, name, price, stock, number_of_purchases")
+        row = await conn.fetchrow(query, *values)
+        if row:
+            return {"id": row["id"],
+                    "name": row["name"],
+                    "price": row["price"],
+                    "stock": row["stock"],
+                    "number_of_purchases": row["number_of_purchases"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
 
 
-    def delete_product_by_id(self, product_id: int) -> Optional[Dict]:
-        data = self._load()
-        for i, product in enumerate(data["products"]):
-            if product["id"] == product_id:
-                deleted = data["products"].pop(i)
-                self._save(data)
-                return deleted
-        return None
+async def delete_product_by_id(product_id: int) -> Optional[Dict]:
+    conn = await get_connection()
+    try:
+        row = await conn.fetchrow(
+            "DELETE FROM products "
+            "WHERE id = $1 RETURNING id, name, price, stock, number_of_purchases",
+            product_id
+        )
+        if row:
+            return {"id": row["id"],
+                    "name": row["name"],
+                    "price": row["price"],
+                    "stock": row["stock"],
+                    "number_of_purchases": row["number_of_purchases"]}
+        else:
+            return None
+
+    finally:
+        await conn.close()
