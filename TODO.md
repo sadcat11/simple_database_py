@@ -5,9 +5,11 @@
 
 ## Server
 - [ ] Add server-side validation for user data
+- [ ] Use asyncio to execute multiple queries in parallel
 
 ## Client
 - [+] Add checks for user input
+- [ ] Transfer user authorization to the client side
 
 ## Autotest
 - [+] Add autotests for products
