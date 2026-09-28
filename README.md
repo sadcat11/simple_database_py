@@ -33,6 +33,8 @@ The required packages are listed below.
 #### Tools
 ```
 pip install fastapi uvicorn asyncpg
+or use:
+pip install -r requirements.txt
 ```
 
 ### Server
