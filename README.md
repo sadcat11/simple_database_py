@@ -19,7 +19,7 @@ Other methods for working with the database can be called by the client from the
 
   - [Client](#client)
 
-  - [Autotest](#autotest)
+  - [Tests](#tests)
 
 - [Code architecture](#code-architecture)
 
@@ -61,7 +61,7 @@ Stop
 ctrl + c
 ```
 
-### Autotest
+### Tests
 `test.py` checks server side. `test_validation.py` checks client side (validation).
 
 To run `test_validation.py`, you don't need to start the server.
@@ -72,7 +72,7 @@ The server's `host` and `port` must match the test's `URL`.
 
 Start
 ```
-cd autotest
+cd tests
 python test.py [--url <url>]
 python -m pytest test_validation.py -v
 ```
@@ -86,4 +86,4 @@ The `server` folder contains the code files for server operation.
 
 The `client` folder contains the files for client operation.
 
-The `autotest` folder contains tests used to verify the application's correct operation.
+The `tests` folder contains tests used to verify the application's correct operation.
