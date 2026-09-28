@@ -130,7 +130,7 @@ def cmd_create_user(client: APIClient, args: List[str]) -> bool:
     if error:
         print(f"Error: {error}")
         return False
-    
+
     user = client.create_user(result["name"], result["email"], result.get("age", 0))
     print(f"User created: ID={user['id']}, {user['name']}")
     return True
@@ -276,8 +276,7 @@ def interactive_console(base_url: str) -> None:
         try:
             command, args = parse_input(input("\n>>> "))
             if command and not dispatch_command(client, command, args):
-                print("Exit...")
-                return
+                print("Action failed, awaiting command")
         except ValueError as error:
             print(f"Argument format error: {error}")
         except requests.exceptions.ConnectionError:

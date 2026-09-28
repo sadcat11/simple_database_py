@@ -25,15 +25,15 @@ def validate_name(name: str) -> Tuple[bool, Optional[str], Optional[str]]:
     return True, name, None
 
 
-def validate_email(email: str) -> Tuple[bool, Optional[str]]:
+def validate_email(email: str) -> Tuple[bool, Optional[str], Optional[str]]:
     if not email:
         return False, None, "Error: Email cannot be empty"
     if "@" not in email:
         return False, None, "Error: Email must contain @"
     if len(email) < 5:
-        return False, "Error: Email must contain at least 5 characters"
+        return False, None, "Error: Email must contain at least 5 characters"
     if not re.match(r"^[^@]+@[^@]+\.[^@]+$", email):
-        return False, "Error: Invalid email format (example: user@example.com)"
+        return False, None, "Error: Invalid email format (example: user@example.com)"
     return True, email, None
 
 
