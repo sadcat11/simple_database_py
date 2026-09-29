@@ -8,6 +8,10 @@ DB_USER = "user"
 DB_PASSWORD = "password"
 
 
+USER_FIELDS = {"name", "email", "age"}
+PRODUCT_FIELDS = {"name", "price", "stock", "number_of_purchases"}
+
+
 async def get_connection():
     return await asyncpg.connect(
         host=DB_HOST,
@@ -74,7 +78,7 @@ async def update_user_by_id(user_id: int, **kwargs) -> Optional[Dict]:
         updates = []
         values = []
         for key, value in kwargs.items():
-            if value is not None:
+            if value is not None and key in USER_FIELDS:
                 updates.append(f"{key} = ${len(values) + 1}")
                 values.append(value)
 
@@ -182,7 +186,7 @@ async def update_product_by_id(product_id: int, **kwargs) -> Optional[Dict]:
         updates = []
         values = []
         for key, value in kwargs.items():
-            if value is not None:
+            if value is not None and key in PRODUCT_FIELDS:
                 updates.append(f"{key} = ${len(values) + 1}")
                 values.append(value)
 
