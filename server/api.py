@@ -195,6 +195,13 @@ if __name__ == "__main__":
     database.DB_USER = args.db_user
     database.DB_PASSWORD = args.db_pass
 
+    database.init_database(
+        host=args.host,
+        db_name=args.db,
+        db_user=args.db_user,
+        db_password=args.db_pass
+    )
+
     print(f"Server running on {args.host}:{args.port}")
     print(f"Database: {args.db}")
     print("Available endpoints:")

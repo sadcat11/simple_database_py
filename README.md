@@ -3,6 +3,8 @@ Client-server simple database
 
 Stable version branch: `1.0_flask_rest_version` (runs on Flask and REST API, using JSON file as storage).
 
+Stable version branch: `2.0_fastapi_pure_sql_query_version` (runs on FastAPI, using PostgreSQL with pure SQL-queries without SQLAlchemy).
+
 Current version branch:
 
 This database runs on `FastAPI` and `PostgreSQL` with `asyncio`.
@@ -29,11 +31,9 @@ To use the client application, you must first start the server.
 ### Required
 #### Python 3
 Python must be installed to run the application.
-The required packages are listed below.
+The required packages are listed in requirements.txt.
 #### Tools
 ```
-pip install fastapi uvicorn asyncpg
-or use:
 pip install -r requirements.txt
 ```
 

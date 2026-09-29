@@ -2,6 +2,7 @@
 
 ## Common
 - [ ] Auto-building Doxygen
+- [ ] Use pydantic for validation
 
 ## Server
 - [ ] Add server-side validation for user data
