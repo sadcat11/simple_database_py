@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Response
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator, EmailStr
+from server_validator import serv_validate_name, serv_validate_email
 from typing import Optional, List, Dict, Any
 import asyncio
 import uvicorn
@@ -14,29 +15,51 @@ DB_USER = "user"
 DB_PASSWORD = "password"
 
 class CreateUser(BaseModel):
-    name: str
-    email: str
-    age: Optional[int] = 0
+    name: str = Field(..., min_length=1, max_length=100,
+                      description="User's name 1-100 chars")
+    email: str = Field(...,
+                       description="User's email")
+    age: Optional[int] = Field(default=0, ge=1, le=200,
+                               description="User's age 1-200")
 
+    _validate_name = field_validator("name")(serv_validate_name)
+    _validate_email = field_validator("email")(serv_validate_email)
 
 class UpdateUser(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    age: Optional[int] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=100,
+                                description="User's name 1-100 chars")
+    email: Optional[str] = Field(default=None,
+                                 description="User's email")
+    age: Optional[int] = Field(default=None, ge=1, le=200,
+                               description="User's age 1-200")
 
+    _validate_name = field_validator("name")(serv_validate_name)
+    _validate_email = field_validator("email")(serv_validate_email)
 
 class CreateProduct(BaseModel):
-    name: str
-    price: float
-    stock: int
-    number_of_purchases: Optional[int] = 0
+    name: str = Field(..., min_length=1, max_length=100,
+                      description="Product's name 1-100 chars")
+    price: float = Field(..., ge=0, le=1_000_000,
+                         description="Product's price 1-1_000_000")
+    stock: int =  Field(..., ge=0, le=1_000_000,
+                        description="Product's stock 1-1_000_000")
+    number_of_purchases: Optional[int] = Field(default=0, ge=0, le=1_000_000,
+                                               description="Product's number_of_purchases 1-1_000_000")
+
+    _validate_name = field_validator("name")(serv_validate_name)
 
 
 class UpdateProduct(BaseModel):
-    name: Optional[str] = None
-    price: Optional[float] = None
-    stock: Optional[int] = None
-    number_of_purchases: Optional[int] = None
+    name: Optional[str] = Field(default=None, min_length=1, max_length=100,
+                                description="Product's name 1-100 chars")
+    price: Optional[float] = Field(default=None, ge=0, le=1_000_000,
+                                   description="Product's price 1-1_000_000")
+    stock: Optional[int] = Field(default=None, ge=0, le=1_000_000,
+                                 description="Product's stock 1-1_000_000")
+    number_of_purchases: Optional[int] = Field(default=None, ge=0, le=1_000_000,
+                                               description="Product's number_of_purchases 1-1_000_000")
+
+    _validate_name = field_validator("name")(serv_validate_name)
 
 
 #===================

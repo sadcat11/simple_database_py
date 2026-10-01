@@ -1,11 +1,12 @@
 # Task list
 
 ## Common
-- [ ] Auto-building Doxygen
-- [ ] Use pydantic for validation
+- [ ] Auto-building docs
+- [+] Use pydantic for validation
+- [ ] Change email validation to pydantic EmailStr
 
 ## Server
-- [ ] Add server-side validation for user data
+- [+] Add server-side validation for user data
 - [ ] Use asyncio to execute multiple queries in parallel
 
 ## Client
