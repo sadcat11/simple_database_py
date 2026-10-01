@@ -1,6 +1,8 @@
 # simple_database_py
 Client-server simple database
 
+[![tests](https://github.com/sadcat11/simple_database_py/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/sadcat11/simple_database_py/actions/workflows/tests.yml)
+
 Stable version branch: `1.0_flask_rest_version` (runs on Flask and REST API, using JSON file as storage).
 
 Stable version branch: `2.0_fastapi_pure_sql_query_version` (runs on FastAPI, using PostgreSQL with pure SQL-queries without SQLAlchemy).
