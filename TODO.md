@@ -2,21 +2,21 @@
 
 ## Common
 - [ ] Auto-building docs
-- [+] Use pydantic for validation
+- [x] Use pydantic for validation
 - [ ] Change email validation to pydantic EmailStr
 
 ## Server
-- [+] Add server-side validation for user data
+- [x] Add server-side validation for user data
 - [ ] Use asyncio to execute multiple queries in parallel
 
 ## Client
-- [+] Add checks for user input
+- [x] Add checks for user input
 - [ ] Transfer user authorization to the client side
 
 ## Autotest
-- [+] Add autotests for products
-- [+] Add tests for new client checks
+- [x] Add autotests for products
+- [x] Add tests for new client checks
 - [ ] Add tests for new server checks
 
 ## Bug
-- [+] Fix users and products create with multiple name parts when creates with optional field
+- [x] Fix users and products create with multiple name parts when creates with optional field
