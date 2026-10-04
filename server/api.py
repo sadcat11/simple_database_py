@@ -154,8 +154,11 @@ async def check_server_check():
 
 @app.get("/")
 async def view_database():
-    users = await database.get_all_users()
-    products = await database.get_all_products()
+    # Async execution of two database queries
+    users, products = await asyncio.gather(
+        database.get_all_users(),
+        database.get_all_products()
+    )
 
     users_html = "".join(
         f"<tr><td>{u['id']}</td><td>{u['name']}</td>"
